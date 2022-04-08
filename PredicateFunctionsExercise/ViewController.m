@@ -17,7 +17,7 @@ typedef int (^predicate)(void);
 typedef int (^ const (*predicate_t))(void);
 
 static int c = 0;
-static int flag = 2;
+static int flag = 1;
 guarded_boolean_expression flag_conditional = ^ int { return flag; };
 
 
@@ -36,7 +36,7 @@ static int (^(^(^(^g)(__strong conditional_boolean_expression, __strong conditio
         return ^ (int(^block)(int)) {
             return ^ (int boolean_expression) {
                 return ^ int {
-                    return block(boolean_expression);
+                    return boolean_expression && block(boolean_expression);
                 };
             }(bitwise_operation((conditional_boolean_expression_t)&boolean_conditional_a, (conditional_boolean_expression_t)&boolean_conditional_b, guarded_conditional));
         };
@@ -50,24 +50,24 @@ static int (^(^(^(^g)(__strong conditional_boolean_expression, __strong conditio
     [super viewDidLoad];
     
     // gbe_a is set to a precalculated and stored result
-    // Invoking gbe_a() merely returns the results without recalculating it -- perfect for use inside the domain of discourse
+    // Invoking gbe_a() merely returns the results without recalculating it
     guarded_boolean_expression gbe_a = g(isEven, isOdd, &flag_conditional)(^ int (conditional_boolean_expression_t boolean_conditional_a, conditional_boolean_expression_t boolean_conditional_b, guarded_boolean_expression_t guarded_conditional) {
-        printf("\nA\t%s\n", __PRETTY_FUNCTION__);
         return ((*boolean_conditional_a)(guarded_conditional)() & (*guarded_conditional)()) && (*boolean_conditional_b)(guarded_conditional);
     })(^ int (int i) {
-        printf("\nB\t%s\n", __PRETTY_FUNCTION__);
+        printf("\t\tgbe_a()\n");
         return i;
     });
     
     guarded_boolean_expression gbe_b = g(isPos, isNeg, &flag_conditional)(^ int (conditional_boolean_expression_t boolean_conditional_a, conditional_boolean_expression_t boolean_conditional_b, guarded_boolean_expression_t guarded_conditional) {
-        printf("\nC\t%s\n", __PRETTY_FUNCTION__);
         return ((*boolean_conditional_a)(guarded_conditional)() & (*guarded_conditional)()) && (*boolean_conditional_b)(guarded_conditional);
     })(^ int (int i) {
-        printf("\nD\t%s\n", __PRETTY_FUNCTION__);
+        printf("\t\tgbe_b()\n");
         return i;
     });
     
-    gbe_a() & gbe_b();
+    printf("gbe_a() == %d\n", gbe_a());
+    printf("gbe_b() == %d\n", gbe_b());
+    printf("gbe_a() & gbe_b() == %d\n", gbe_a() & gbe_b());
     
     // Returning a variety of bitwise operations with randomly chosen operands and operators
     // to demonstrate that simd vectors can be used combining multiple bitwise operations into a single operation
